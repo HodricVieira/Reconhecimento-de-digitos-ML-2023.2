@@ -42,6 +42,7 @@ class RegressaoLogistica():
         self.accuracy = accuracies[-1]
 
         return w, accuracies[-1], classes_amostrais_previstas
+        #return classes_amostrais_previstas
 
     def get_w(self):
         return self.w
