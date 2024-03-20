@@ -76,3 +76,32 @@ class RegressaoLinear():
 ####################################################################################################
 ####################################################################################################
 
+class PLA():
+    def __init__(self, max_iter= 100):
+        self.max_iter = max_iter
+        
+
+    def fit(self, _X, _Y):
+        X = np.array(_X)
+        Y = np.array(_Y)
+        self.w = np.zeros(len(X[0]))
+
+        for iter in range(self.max_iter):         
+            #Testa se sign(wTXn) != Yn - ponto classificado errado
+            for i in range(len(Y)):
+                if(np.sign(np.dot(self.w, X[i])) != Y[i]):
+                    self.w = self.w + (Y[i]*X[i])
+
+    def getW(self):
+        return self.w
+
+    def atribuicao_de_classes(self, _x):
+        x = np.array(_x)
+        classes_amostrais_previstas = []
+        probabilidades = np.dot(x, self.w)
+        for probabilidade in probabilidades:
+            if probabilidade > 0:
+                classes_amostrais_previstas.append(1)
+            else:
+                classes_amostrais_previstas.append(-1)
+        return np.array(classes_amostrais_previstas)
