@@ -1,6 +1,9 @@
 import numpy as np
 
 class RegressaoLogistica():
+    def __str__(self):
+        return "Regressao Logistica"
+    
     def __init__(self, eta = 0.000001, max_iter = 1000):
         self.eta = eta
         self.max_iteracoes = max_iter
@@ -51,6 +54,9 @@ class RegressaoLogistica():
 ####################################################################################################
 
 class RegressaoLinear():
+    def __str__(self):
+        return "Regressao Linear"
+    
     def fit(self, _X, _y):
         X = np.array(_X) # X é uma matriz de amostras
         Y = np.array(_y)
@@ -78,6 +84,9 @@ class RegressaoLinear():
 ####################################################################################################
 
 class PLA():
+    def __str__(self):
+        return "Perceptron Learning Algorithm"
+    
     def __init__(self, max_iter= 100):
         self.max_iter = max_iter
         
