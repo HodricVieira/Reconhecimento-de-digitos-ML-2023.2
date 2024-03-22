@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class RegressaoLogistica():
     def __str__(self):
@@ -49,6 +50,20 @@ class RegressaoLogistica():
 
     def get_w(self):
         return self.w
+    
+    def plot_grafico(self, X, y_pred, valor1, valor2):
+        # Criando a reta para plotar o gráfico
+        x = np.linspace(-2, 2, 100)
+        y_plot = (-self.w[0] - self.w[1]*x) / self.w[2]
+        # printando as bolinhas vermelhas e azuis, se a classe for 1 (numero 1), plota azul, se for -1, plota vermelho
+        plt.scatter(X[y_pred == 1, 1], X[y_pred == 1, 2], color='blue', marker='o', label=f'{valor1}')
+        plt.scatter(X[y_pred == -1, 1], X[y_pred == -1, 2], color='red', marker='o', label=f'{valor2}')
+        plt.plot(x, y_plot, label='Regressão Logística')
+        plt.xlabel('Intensidade')
+        plt.ylabel('Simetria')
+        plt.title('Intensidade x Simetria')
+        plt.legend()
+        plt.show()
 
 ####################################################################################################
 ####################################################################################################
@@ -57,6 +72,10 @@ class RegressaoLinear():
     def __str__(self):
         return "Regressao Linear"
     
+    def calculate_accuracy(self,classes_amostrais_previstas, y):
+        accuracy = (sum(classes_amostrais_previstas==y)/len(y))*100
+        return accuracy
+    
     def fit(self, _X, _y):
         X = np.array(_X) # X é uma matriz de amostras
         Y = np.array(_y)
@@ -64,6 +83,7 @@ class RegressaoLinear():
         XtX_inv = np.linalg.inv(XtX)
         XtY = np.dot(X.transpose(), Y)
         self.w = np.dot(XtX_inv, XtY) # w é um vetor unico
+        return self.w
      
     def atribuicao_de_classes(self, _x):
         x = np.array(_x)
@@ -79,6 +99,20 @@ class RegressaoLinear():
      
     def getW(self):
         return self.w
+    
+    def plot_grafico(self, X, y_pred, valor1, valor2):
+        # Criando a reta para plotar o gráfico
+        x = np.linspace(-2, 2, 100)
+        y_plot = (-self.w[0] - self.w[1]*x) / self.w[2]
+        # printando as bolinhas vermelhas e azuis, se a classe for 1 (numero 1), plota azul, se for -1, plota vermelho
+        plt.scatter(X[y_pred == 1, 1], X[y_pred == 1, 2], color='blue', marker='o', label=f'{valor1}')
+        plt.scatter(X[y_pred == -1, 1], X[y_pred == -1, 2], color='red', marker='o', label=f'{valor2}')
+        plt.plot(x, y_plot, label='Regressão Logística')
+        plt.xlabel('Intensidade')
+        plt.ylabel('Simetria')
+        plt.title('Intensidade x Simetria')
+        plt.legend()
+        plt.show()
 
 ####################################################################################################
 ####################################################################################################
