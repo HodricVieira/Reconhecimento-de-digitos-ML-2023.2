@@ -107,7 +107,7 @@ class RegressaoLinear():
         # printando as bolinhas vermelhas e azuis, se a classe for 1 (numero 1), plota azul, se for -1, plota vermelho
         plt.scatter(X[y_pred == 1, 1], X[y_pred == 1, 2], color='blue', marker='o', label=f'{valor1}')
         plt.scatter(X[y_pred == -1, 1], X[y_pred == -1, 2], color='red', marker='o', label=f'{valor2}')
-        plt.plot(x, y_plot, label='Regressão Logística')
+        plt.plot(x, y_plot, label='Regressão Linear')
         plt.xlabel('Intensidade')
         plt.ylabel('Simetria')
         plt.title('Intensidade x Simetria')
@@ -127,14 +127,27 @@ class PLA():
 
     def fit(self, _X, _Y):
         X = np.array(_X)
-        Y = np.array(_Y)
+        y = np.array(_Y)
         self.w = np.zeros(len(X[0]))
+        bestError = len(y)
+        bestW = self.w
 
         for iter in range(self.max_iter):         
             #Testa se sign(wTXn) != Yn - ponto classificado errado
-            for i in range(len(Y)):
-                if(np.sign(np.dot(self.w, X[i])) != Y[i]):
-                    self.w = self.w + (Y[i]*X[i])
+            for i in range(len(y)):
+                if(np.sign(np.dot(self.w, X[i])) != y[i]):
+                    self.w = self.w + (y[i]*X[i])
+                    eIN = self.errorIN(X, y)
+                    if(bestError > eIN):
+                        bestError = eIN
+                        bestW = self.w
+
+    def errorIN(self, X, y):
+        error = 0
+        for i in range(len(y)):
+            if(np.sign(np.dot(self.w, X[i])) != y[i]):
+                error += 1
+        return error
 
     def getW(self):
         return self.w
@@ -149,3 +162,21 @@ class PLA():
             else:
                 classes_amostrais_previstas.append(-1)
         return np.array(classes_amostrais_previstas)
+
+    def calculate_accuracy(self,classes_amostrais_previstas, y):
+        accuracy = (sum(classes_amostrais_previstas==y)/len(y))*100
+        return accuracy
+
+    def plot_grafico(self, X, y_pred, valor1, valor2):
+        # Criando a reta para plotar o gráfico
+        x = np.linspace(-2, 2, 100)
+        y_plot = (-self.w[0] - self.w[1]*x) / self.w[2]
+        # printando as bolinhas vermelhas e azuis, se a classe for 1 (numero 1), plota azul, se for -1, plota vermelho
+        plt.scatter(X[y_pred == 1, 1], X[y_pred == 1, 2], color='blue', marker='o', label=f'{valor1}')
+        plt.scatter(X[y_pred == -1, 1], X[y_pred == -1, 2], color='red', marker='o', label=f'{valor2}')
+        plt.plot(x, y_plot, label='Perceptron')
+        plt.xlabel('Intensidade')
+        plt.ylabel('Simetria')
+        plt.title('Intensidade x Simetria')
+        plt.legend()
+        plt.show()
