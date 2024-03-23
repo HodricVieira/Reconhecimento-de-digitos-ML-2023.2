@@ -5,64 +5,61 @@ class RegressaoLogistica():
     def __str__(self):
         return "Regressao Logistica"
     
-    def __init__(self, eta = 0.000001, max_iter = 1000):
+    def __init__(self,X_, y_, eta = 0.0001, max_iter = 200):
         self.eta = eta
         self.max_iteracoes = max_iter
+        self.y = np.array(y_)
+        self.X = np.array(X_)
+        self.w = np.zeros((self.X.shape[1], 1))
     # Função que vai atribuir a cada amostra uma probabilidade de ser 1 ou 5 (1 ou -1)
     def probabilidades(self,w, X):
-        z = np.matmul(w, X) # Esse aqui é o X.T para a operaçao ser possivel. Tambem pode ser feito com np.dot(w, X)
-        probabilidades_amostrais = 1/(1+np.exp(-z))
-        return probabilidades_amostrais
+        z = np.dot(X, w)
+        return 1 / (1 + np.exp(-z))
     
     # Funçção que vai atribuir a cada amostra uma classe de acordo com sua probabilidade
-    def atribuicao_de_classes(self,probabilidades_amostrais):
-        classes_amostrais_previstas = np.zeros(len(probabilidades_amostrais))
-        classes_amostrais_previstas[np.where(probabilidades_amostrais<0.5)] = -1
-        classes_amostrais_previstas[np.where(probabilidades_amostrais>=0.5)] = 1
+    def atribuicao_de_classes(self,w, x):
+        classes_amostrais_previstas = np.array([])
+        probabilidades_amostrais = self.probabilidades(w, x)
+        for probabilidade in probabilidades_amostrais:
+            if probabilidade > 0.5:
+                classes_amostrais_previstas = np.append(classes_amostrais_previstas, 1)
+            else:
+                classes_amostrais_previstas = np.append(classes_amostrais_previstas, -1)
         return classes_amostrais_previstas
     
     # Função que vai calcular a acuracia do modelo
     def calculate_accuracy(self,classes_amostrais_previstas, y):
+        # onde tiver -1, vai ser 0, onde tiver 1, vai ser 1
+        classes_amostrais_previstas = np.where(classes_amostrais_previstas == -1, 0, 1)
         accuracy = (sum(classes_amostrais_previstas==y)/len(y))*100
         return accuracy
 
 
-    def fit(self, X, Y):
-        y = Y
-        accuracies = []
-        w = np.zeros(X.shape[0])
-        m = len(y)
-        
+    def fit(self):
         for i in range(self.max_iteracoes):
-            probabilidades_amostrais = self.probabilidades(w, X)
-            classes_amostrais_previstas = self.atribuicao_de_classes(probabilidades_amostrais)
-            accuracies.append(self.calculate_accuracy(classes_amostrais_previstas, y))
-            erros = probabilidades_amostrais - y
-            gradiente = (1/m)*np.matmul(X,erros)
-            w = w - (self.eta*gradiente)
-        
-        self.classes_amostrais_previstas = classes_amostrais_previstas
-        self.w = w
-        self.accuracy = accuracies[-1]
-
-        return w, accuracies[-1], classes_amostrais_previstas
-        #return classes_amostrais_previstas
+            probabilidades_amostrais = self.probabilidades(self.w, self.X)
+            erros = probabilidades_amostrais - np.reshape(self.y, (len(self.y), 1))
+            gradiente = np.dot(self.X.T,erros)
+            self.w = self.w - (self.eta*gradiente)
 
     def get_w(self):
         return self.w
     
-    def plot_grafico(self, X, y_pred, valor1, valor2):
-        # Criando a reta para plotar o gráfico
-        x = np.linspace(-2, 2, 100)
-        y_plot = (-self.w[0] - self.w[1]*x) / self.w[2]
-        # printando as bolinhas vermelhas e azuis, se a classe for 1 (numero 1), plota azul, se for -1, plota vermelho
+    def plot_grafico(self,X, y_pred, valor1, valor2):
         plt.scatter(X[y_pred == 1, 1], X[y_pred == 1, 2], color='blue', marker='o', label=f'{valor1}')
         plt.scatter(X[y_pred == -1, 1], X[y_pred == -1, 2], color='red', marker='o', label=f'{valor2}')
-        plt.plot(x, y_plot, label='Regressão Logística')
-        plt.xlabel('Intensidade')
-        plt.ylabel('Simetria')
-        plt.title('Intensidade x Simetria')
+        xmin = np.min(self.X[:, 1]) - 0.5
+        xmax = np.max(self.X[:, 1]) + 0.5
+        x = np.linspace(xmin, xmax, 100)
+        y_plot = (-self.w[0] - self.w[1]*x) / self.w[2]
+        plt.plot(x, y_plot, label="Regressao Logistica")
+        plt.title(f"Regressão Logística - Intensidade x Simetria")
+        plt.xlabel("Intensidade")
+        plt.ylabel("Simetria")
         plt.legend()
+        # limita com o maior e menor valor de x e y
+        plt.xlim(xmin, xmax)
+        plt.ylim(np.min(self.X[:, 2]) - 0.5, np.max(self.X[:, 2]) + 0.5)       
         plt.show()
 
 ####################################################################################################
@@ -110,7 +107,7 @@ class RegressaoLinear():
         plt.plot(x, y_plot, label='Regressão Linear')
         plt.xlabel('Intensidade')
         plt.ylabel('Simetria')
-        plt.title('Intensidade x Simetria')
+        plt.title('Regressao Linear - Intensidade x Simetria')
         plt.legend()
         plt.show()
 
@@ -177,6 +174,6 @@ class PLA():
         plt.plot(x, y_plot, label='Perceptron')
         plt.xlabel('Intensidade')
         plt.ylabel('Simetria')
-        plt.title('Intensidade x Simetria')
+        plt.title('PLA - Intensidade x Simetria')
         plt.legend()
         plt.show()
