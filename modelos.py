@@ -18,23 +18,17 @@ class RegressaoLogistica():
     
     # Funçção que vai atribuir a cada amostra uma classe de acordo com sua probabilidade
     def atribuicao_de_classes(self,w, x):
-        ##classes_amostrais_previstas = np.array([])
-        classes_amostrais_previstas = []
+        classes_amostrais_previstas = np.array([])
         probabilidades_amostrais = self.probabilidades(w, x)
-        ##print(probabilidades_amostrais)
         for probabilidade in probabilidades_amostrais:
             if probabilidade > 0.5:
-                ##classes_amostrais_previstas = np.append(classes_amostrais_previstas, 1)
-                classes_amostrais_previstas.append(1)
+                classes_amostrais_previstas = np.append(classes_amostrais_previstas, 1)
             else:
-                ##classes_amostrais_previstas = np.append(classes_amostrais_previstas, -1)
-                classes_amostrais_previstas.append(-1)
-        return np.array(classes_amostrais_previstas)
+                classes_amostrais_previstas = np.append(classes_amostrais_previstas, -1)
+        return classes_amostrais_previstas
     
     # Função que vai calcular a acuracia do modelo
     def calculate_accuracy(self,classes_amostrais_previstas, y):
-        # onde tiver -1, vai ser 0, onde tiver 1, vai ser 1
-        classes_amostrais_previstas = np.where(classes_amostrais_previstas == -1, 0, 1)
         accuracy = (sum(classes_amostrais_previstas==y)/len(y))*100
         return accuracy
 
@@ -52,18 +46,19 @@ class RegressaoLogistica():
     def plot_grafico(self,X, y_pred, valor1, valor2):
         plt.scatter(X[y_pred == 1, 1], X[y_pred == 1, 2], color='blue', marker='o', label=f'{valor1}')
         plt.scatter(X[y_pred == -1, 1], X[y_pred == -1, 2], color='red', marker='o', label=f'{valor2}')
-        xmin = np.min(self.X[:, 1]) - 0.5
-        xmax = np.max(self.X[:, 1]) + 0.5
-        x = np.linspace(xmin, xmax, 100)
+        x_min = np.min(X[:, 1]) - 0.5 # Menor valor da coluna de intensidade (eixo x)
+        x_max = np.max(X[:, 1]) + 0.5 # Maior valor da coluna de intensidade (eixo x)
+        y_min = np.min(X[:, 2]) - 0.5 # Menor valor da coluna de simetria (eixo y)
+        y_max = np.max(X[:, 2]) + 0.5 # Maior valor da coluna de simetria (eixo y)
+        x = np.linspace(x_min, x_max, 100)
         y_plot = (-self.w[0] - self.w[1]*x) / self.w[2]
         plt.plot(x, y_plot, label="Regressao Logistica")
         plt.title(f"Regressão Logística - Intensidade x Simetria")
         plt.xlabel("Intensidade")
         plt.ylabel("Simetria")
         plt.legend()
-        # limita com o maior e menor valor de x e y
-        plt.xlim(xmin, xmax)
-        plt.ylim(np.min(self.X[:, 2]) - 0.5, np.max(self.X[:, 2]) + 0.5)       
+        plt.xlim(x_min, x_max)
+        plt.ylim(y_min, y_max)        
         plt.show()
 
 ####################################################################################################
@@ -101,18 +96,22 @@ class RegressaoLinear():
     def getW(self):
         return self.w
     
-    def plot_grafico(self, X, y_pred, valor1, valor2):
-        # Criando a reta para plotar o gráfico
-        x = np.linspace(-2, 2, 100)
-        y_plot = (-self.w[0] - self.w[1]*x) / self.w[2]
-        # printando as bolinhas vermelhas e azuis, se a classe for 1 (numero 1), plota azul, se for -1, plota vermelho
+    def plot_grafico(self,X, y_pred, valor1, valor2):
         plt.scatter(X[y_pred == 1, 1], X[y_pred == 1, 2], color='blue', marker='o', label=f'{valor1}')
         plt.scatter(X[y_pred == -1, 1], X[y_pred == -1, 2], color='red', marker='o', label=f'{valor2}')
-        plt.plot(x, y_plot, label='Regressão Linear')
-        plt.xlabel('Intensidade')
-        plt.ylabel('Simetria')
-        plt.title('Regressao Linear - Intensidade x Simetria')
+        x_min = np.min(X[:, 1]) - 0.5 # Menor valor da coluna de intensidade (eixo x)
+        x_max = np.max(X[:, 1]) + 0.5 # Maior valor da coluna de intensidade (eixo x)
+        y_min = np.min(X[:, 2]) - 0.5 # Menor valor da coluna de simetria (eixo y)
+        y_max = np.max(X[:, 2]) + 0.5 # Maior valor da coluna de simetria (eixo y)
+        x = np.linspace(x_min, x_max, 100)
+        y_plot = (-self.w[0] - self.w[1]*x) / self.w[2]
+        plt.plot(x, y_plot, label="Regressao Linear")
+        plt.title(f"Regressão Linear - Intensidade x Simetria")
+        plt.xlabel("Intensidade")
+        plt.ylabel("Simetria")
         plt.legend()
+        plt.xlim(x_min, x_max)
+        plt.ylim(y_min, y_max)        
         plt.show()
 
 ####################################################################################################
@@ -168,16 +167,20 @@ class PLA():
         accuracy = (sum(classes_amostrais_previstas==y)/len(y))*100
         return accuracy
 
-    def plot_grafico(self, X, y_pred, valor1, valor2):
-        # Criando a reta para plotar o gráfico
-        x = np.linspace(-2, 2, 100)
-        y_plot = (-self.w[0] - self.w[1]*x) / self.w[2]
-        # printando as bolinhas vermelhas e azuis, se a classe for 1 (numero 1), plota azul, se for -1, plota vermelho
+    def plot_grafico(self,X, y_pred, valor1, valor2):
         plt.scatter(X[y_pred == 1, 1], X[y_pred == 1, 2], color='blue', marker='o', label=f'{valor1}')
         plt.scatter(X[y_pred == -1, 1], X[y_pred == -1, 2], color='red', marker='o', label=f'{valor2}')
-        plt.plot(x, y_plot, label='Perceptron')
-        plt.xlabel('Intensidade')
-        plt.ylabel('Simetria')
-        plt.title('PLA - Intensidade x Simetria')
+        x_min = np.min(X[:, 1]) - 0.5 # Menor valor da coluna de intensidade (eixo x)
+        x_max = np.max(X[:, 1]) + 0.5 # Maior valor da coluna de intensidade (eixo x)
+        y_min = np.min(X[:, 2]) - 0.5 # Menor valor da coluna de simetria (eixo y)
+        y_max = np.max(X[:, 2]) + 0.5 # Maior valor da coluna de simetria (eixo y)
+        x = np.linspace(x_min, x_max, 100)
+        y_plot = (-self.w[0] - self.w[1]*x) / self.w[2]
+        plt.plot(x, y_plot, label="Perceptron")
+        plt.title(f"PLA - Intensidade x Simetria")
+        plt.xlabel("Intensidade")
+        plt.ylabel("Simetria")
         plt.legend()
+        plt.xlim(x_min, x_max)
+        plt.ylim(y_min, y_max)        
         plt.show()
