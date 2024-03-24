@@ -18,14 +18,18 @@ class RegressaoLogistica():
     
     # Funçção que vai atribuir a cada amostra uma classe de acordo com sua probabilidade
     def atribuicao_de_classes(self,w, x):
-        classes_amostrais_previstas = np.array([])
+        ##classes_amostrais_previstas = np.array([])
+        classes_amostrais_previstas = []
         probabilidades_amostrais = self.probabilidades(w, x)
+        ##print(probabilidades_amostrais)
         for probabilidade in probabilidades_amostrais:
             if probabilidade > 0.5:
-                classes_amostrais_previstas = np.append(classes_amostrais_previstas, 1)
+                ##classes_amostrais_previstas = np.append(classes_amostrais_previstas, 1)
+                classes_amostrais_previstas.append(1)
             else:
-                classes_amostrais_previstas = np.append(classes_amostrais_previstas, -1)
-        return classes_amostrais_previstas
+                ##classes_amostrais_previstas = np.append(classes_amostrais_previstas, -1)
+                classes_amostrais_previstas.append(-1)
+        return np.array(classes_amostrais_previstas)
     
     # Função que vai calcular a acuracia do modelo
     def calculate_accuracy(self,classes_amostrais_previstas, y):
