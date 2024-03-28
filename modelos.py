@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy import linalg as LA
 
 class RegressaoLogistica():
     def __str__(self):
@@ -34,11 +35,15 @@ class RegressaoLogistica():
 
 
     def fit(self):
+        num_iter = 0
         for i in range(self.max_iteracoes):
             probabilidades_amostrais = self.probabilidades(self.w, self.X)
             erros = probabilidades_amostrais - np.reshape(self.y, (len(self.y), 1))
             gradiente = np.dot(self.X.T,erros)
             self.w = self.w - (self.eta*gradiente)
+            num_iter += 1
+            if LA.norm(gradiente) < 0.0001 :
+                break
 
     def get_w(self):
         return self.w

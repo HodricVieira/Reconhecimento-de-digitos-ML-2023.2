@@ -15,9 +15,13 @@ def padronizar_normal(matriz_X):
 
 # Função que vai plotar a matriz de confusão
 def ver_confusao(matriz_de_confusao):
+    classes = ['1', '5']
     plt.matshow(matriz_de_confusao, cmap='Blues')
     plt.title('Matriz de confusão')
     plt.colorbar()
+    # Adicionando rótulos aos eixos
+    plt.xticks(np.arange(len(classes)), classes)
+    plt.yticks(np.arange(len(classes)), classes)
     plt.ylabel("Classificações corretas")
     plt.xlabel("Classificações obtidas")
     plt.show()
