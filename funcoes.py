@@ -42,7 +42,7 @@ def ver_treino(X, Y, a, b, modelo):
     print(matriz_de_confusao_treino)
 
     #Printando o relatório de classificação
-    print(classification_report(Y, y_pred_treino, target_names=[str(a), str(b)]))
+    print(classification_report(Y, y_pred_treino, target_names=[str(b), str(a)]))
 
     # Voltando os valores de y_pred_treino_rl para 1 e 5
     y_pred_treino[y_pred_treino == 1] = a
@@ -73,7 +73,7 @@ def ver_teste(X_teste, y_teste, a, b, modelo):
     print(matriz_de_confusao_teste)
 
     #Printando o relatório de classificação
-    print(classification_report(y_teste, y_pred_test, target_names=[str(a), str(b)]))
+    print(classification_report(y_teste, y_pred_test, target_names=[str(b), str(a)]))
 
     # Voltando os valores de y_pred_test_rl para 1 e 5
     y_pred_test[y_pred_test == 1] = a
@@ -96,13 +96,11 @@ def ver_teste(X_teste, y_teste, a, b, modelo):
 ############################################################################################################################################################################
 
 # Função responsável pela classificação 1 vs todos da regressão logística
-def classificador_de_todos_os_digitos_treinamento_Rlog(X_treino,Y_treino, X_teste, Y_teste, lista_digitos):
+def classificador_de_todos_os_digitos_Rlog(X_treino,Y_treino, X_teste, Y_teste, lista_digitos):
     X = X_treino.copy()
     x_teste = X_teste.copy()
     y = Y_treino.copy()
     y_teste = Y_teste.copy()
-    y_pred_treino_list = []
-    y_pred_teste_list = []
 
     for digito in lista_digitos:     
         y_binario_treino = np.where(y == digito, 1, 0) # Com 1 e 0 o resultado do fit é mais preciso que com 1 e -1
@@ -112,10 +110,8 @@ def classificador_de_todos_os_digitos_treinamento_Rlog(X_treino,Y_treino, X_test
 
         # Classificação do treino
         y_pred_treino = modelo_reg_log.atribuicao_de_classes(modelo_reg_log.get_w(),X) # y_pred_treino retorna 1 e -1 (como especificado no projeto)
-        y_pred_treino_list.append(y_pred_treino)
         # Classificação do teste
         y_pred_teste = modelo_reg_log.atribuicao_de_classes(modelo_reg_log.get_w(),x_teste)
-        y_pred_teste_list.append(y_pred_teste) 
         # Alterando o y_binario_treino (onde tiver 0, troco para -1, pois o y_pred_treino é 1 ou -1)
         y_binario_treino = np.where(y_binario_treino == 0, -1, 1)
 
@@ -125,7 +121,7 @@ def classificador_de_todos_os_digitos_treinamento_Rlog(X_treino,Y_treino, X_test
         print('Matriz de confusão do treino, os valores do digito estao na linha de baixo')
         matriz_de_confusao_treino = confusion_matrix(y_binario_treino, y_pred_treino)
         print(matriz_de_confusao_treino)
-        print(classification_report(y_binario_treino, y_pred_treino, target_names=[f'{digito}', '-1']))
+        print(classification_report(y_binario_treino, y_pred_treino, target_names=['-1',f'{digito}']))
         # Gráfico do treino
         print('Gráfico de treino')
         modelo_reg_log.plot_grafico(X, y_pred_treino, digito, -1)
@@ -136,7 +132,7 @@ def classificador_de_todos_os_digitos_treinamento_Rlog(X_treino,Y_treino, X_test
         print('Matriz de confusão do teste, os valores do digito estao na linha de baixo')
         matriz_de_confusao_teste = confusion_matrix(y_binario_teste, y_pred_teste)
         print(matriz_de_confusao_teste)
-        print(classification_report(y_binario_teste, y_pred_teste, target_names=[f'{digito}', '-1']))
+        print(classification_report(y_binario_teste, y_pred_teste, target_names=['-1',f'{digito}']))
         # Gráfico do teste
         print('Gráfico de teste')
         modelo_reg_log.plot_grafico(x_teste, y_pred_teste, digito, -1)
@@ -149,17 +145,15 @@ def classificador_de_todos_os_digitos_treinamento_Rlog(X_treino,Y_treino, X_test
         x_teste = np.delete(x_teste, indices_teste, axis=0)
         y_teste = np.delete(y_teste, indices_teste, axis=0)
     
-    return y_pred_treino_list, y_pred_teste_list
 ############################################################################################################################################################################
 ############################################################################################################################################################################
 
 # Função responsável pela classificação 1 vs todos da regressão linear e do PLA
-def classificador_de_todos_os_digitos_treinamento(X_treino,Y_treino,  X_teste, Y_teste, lista_digitos, modelo_reg):
+def classificador_de_todos_os_digitos(X_treino,Y_treino,  X_teste, Y_teste, lista_digitos, modelo_reg):
     X = X_treino.copy()
     y = Y_treino.copy()
     x_teste = X_teste.copy()
     y_teste = Y_teste.copy()
-    #modelo_reg = md.RegressaoLinear()
 
     for digito in lista_digitos:     
         y_binario_treino = np.where(y == digito, 1, -1)
@@ -177,7 +171,7 @@ def classificador_de_todos_os_digitos_treinamento(X_treino,Y_treino,  X_teste, Y
         print('Matriz de confusão do treino, os valores do digito estao na linha de baixo')
         matriz_de_confusao_treino = confusion_matrix(y_binario_treino, y_pred_treino)
         print(matriz_de_confusao_treino)
-        print(classification_report(y_binario_treino, y_pred_treino, target_names=[f'{digito}', '-1']))
+        print(classification_report(y_binario_treino, y_pred_treino, target_names=['-1',f'{digito}']))
         # Gráfico do treino
         print('Gráfico de treino')
         modelo_reg.plot_grafico(X, y_pred_treino, digito, -1)
@@ -187,7 +181,7 @@ def classificador_de_todos_os_digitos_treinamento(X_treino,Y_treino,  X_teste, Y
         print('Acuracia do teste:', modelo_reg.calculate_accuracy(y_pred_teste, y_binario_teste))
         matriz_de_confusao_teste = confusion_matrix(y_binario_teste, y_pred_teste)
         print(matriz_de_confusao_teste)
-        print(classification_report(y_binario_teste, y_pred_teste, target_names=[f'{digito}', '-1']))
+        print(classification_report(y_binario_teste, y_pred_teste, target_names=['-1',f'{digito}']))
         print('Gráfico de teste')
         # plotando o gráfico de teste
         modelo_reg.plot_grafico(x_teste, y_pred_teste, digito, -1)

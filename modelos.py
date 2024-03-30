@@ -11,7 +11,7 @@ class RegressaoLogistica():
         self.max_iteracoes = max_iter
         self.y = np.array(y_)
         self.X = np.array(X_)
-        self.w = np.zeros((self.X.shape[1], 1))
+        self.w = np.zeros((self.X.shape[1], 1)) # Uma matriz de zeros com uma coluna para garantir que cada caracteristica tenha um peso
     # Função que vai atribuir a cada amostra uma probabilidade de ser 1 ou 5 (1 ou -1)
     def probabilidades(self,w, X):
         z = np.dot(X, w)
@@ -38,7 +38,8 @@ class RegressaoLogistica():
         num_iter = 0
         for i in range(self.max_iteracoes):
             probabilidades_amostrais = self.probabilidades(self.w, self.X)
-            erros = probabilidades_amostrais - np.reshape(self.y, (len(self.y), 1))
+            # probabilidades_amostrais é uma matriz de probabilidades com uma coluna, por isso preciso transformar o y
+            erros = probabilidades_amostrais - np.reshape(self.y, (len(self.y), 1)) 
             gradiente = np.dot(self.X.T,erros)
             self.w = self.w - (self.eta*gradiente)
             num_iter += 1
