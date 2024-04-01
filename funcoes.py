@@ -32,9 +32,6 @@ def ver_confusao(matriz_de_confusao):
 # Função que vai retornar o relatório de classificação do treino
 def ver_treino(X, Y, a, b, modelo):
     # a e b são os dois indices escolhidos
-
-    # Treinando o modelo de regressão linear
-    #modelo.fit(X, Y)
     y_pred_treino = modelo.atribuicao_de_classes(X)
 
     #Criando a matriz de confusão
@@ -44,23 +41,8 @@ def ver_treino(X, Y, a, b, modelo):
     #Printando o relatório de classificação
     print(classification_report(Y, y_pred_treino, target_names=[str(b), str(a)]))
 
-    # Voltando os valores de y_pred_treino_rl para 1 e 5
-    y_pred_treino[y_pred_treino == 1] = a
-    y_pred_treino[y_pred_treino == -1] = b
-
     # Criando a reta para plotar o gráfico
-    w = modelo.getW()
-    x = np.linspace(-2, 2, 100)
-    y_plot = (-w[0] - w[1]*x) / w[2]
-    # printando as bolinhas vermelhas e azuis, se a classe for 1 (numero 1), plota azul, se for -1, plota vermelho
-    plt.scatter(X[y_pred_treino == a, 1], X[y_pred_treino == a, 2], color='blue', marker='o', label=a)
-    plt.scatter(X[y_pred_treino == b, 1], X[y_pred_treino == b, 2], color='red', marker='o', label=b)
-    plt.plot(x, y_plot, label=f'{modelo}')
-    plt.xlabel('Intensidade')
-    plt.ylabel('Simetria')
-    plt.title('Intensidade x Simetria')
-    plt.legend()
-    plt.show()
+    modelo.plot_grafico(X, y_pred_treino, a, b)
     ver_confusao(matriz_de_confusao_treino)
 
 
@@ -75,22 +57,7 @@ def ver_teste(X_teste, y_teste, a, b, modelo):
     #Printando o relatório de classificação
     print(classification_report(y_teste, y_pred_test, target_names=[str(b), str(a)]))
 
-    # Voltando os valores de y_pred_test_rl para 1 e 5
-    y_pred_test[y_pred_test == 1] = a
-    y_pred_test[y_pred_test == -1] = b
-
-    w = modelo.getW()
-    x = np.linspace(-2, 2, 100)
-    y_plot = (-w[0] - w[1]*x) / w[2]
-    # printando as bolinhas vermelhas e azuis, se a classe for 1 (numero 1), plota azul, se for -1, plota vermelho
-    plt.scatter(X_teste[y_pred_test == a, 1], X_teste[y_pred_test == a, 2], color='blue', marker='o', label=a) # primeiro argumento é a intensidade, segundo é a simetria 
-    plt.scatter(X_teste[y_pred_test == b, 1], X_teste[y_pred_test == b, 2], color='red', marker='o', label=b)
-    plt.plot(x, y_plot, label=f'{modelo}')
-    plt.xlabel('Intensidade')
-    plt.ylabel('Simetria')
-    plt.title('Intensidade x Simetria')
-    plt.legend()
-    plt.show()
+    modelo.plot_grafico(X_teste, y_pred_test, a, b)
     ver_confusao(matriz_de_confusao_teste)
 ############################################################################################################################################################################
 ############################################################################################################################################################################

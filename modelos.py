@@ -135,25 +135,27 @@ class PLA():
         X = np.array(_X)
         y = np.array(_Y)
         self.w = np.zeros(len(X[0]))
-        bestError = len(y)
-        bestW = self.w
+        menor_erro = len(y)
+        melhor_w = self.w
 
-        for iter in range(self.max_iter):         
-            #Testa se sign(wTXn) != Yn - ponto classificado errado
+        for iter in range(self.max_iter):
+            erro_na_amostra = self.erro_amostral(X, y)
+            if(menor_erro > erro_na_amostra):
+                menor_erro = erro_na_amostra
+                melhor_w = self.w         
+
             for i in range(len(y)):
                 if(np.sign(np.dot(self.w, X[i])) != y[i]):
                     self.w = self.w + (y[i]*X[i])
-                    eIN = self.errorIN(X, y)
-                    if(bestError > eIN):
-                        bestError = eIN
-                        bestW = self.w
+        self.w = melhor_w
+                    
 
-    def errorIN(self, X, y):
-        error = 0
+    def erro_amostral(self, X, y):
+        erro = 0
         for i in range(len(y)):
             if(np.sign(np.dot(self.w, X[i])) != y[i]):
-                error += 1
-        return error
+                erro += 1
+        return erro
 
     def getW(self):
         return self.w
